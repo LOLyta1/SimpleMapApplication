@@ -9,14 +9,11 @@ class PermissionHelper {
 
     companion object {
         private val LOCATION_PERMISSION_REQUEST_CODE = 1
-        val LOCATION_MIN_DISTANCE: Float = 1.0F
-        val LOCATION_REFRESH_TIME = 1L
 
         val LOCATION = arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
-
 
         fun isPermissionsGranted(activity: FragmentActivity, permissions: Array<String>): Boolean {
             var isAllGranted = true
@@ -27,7 +24,6 @@ class PermissionHelper {
             }
             return isAllGranted
         }
-
 
         fun requestPermission(activity: FragmentActivity, permissions: Array<String>) {
             ActivityCompat.requestPermissions(

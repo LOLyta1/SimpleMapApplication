@@ -1,9 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity" />
+    android:layout_height="match_parent">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity" />
+
+    <LinearLayout
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_gravity="right|bottom"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="RtlHardcoded">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/target_floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/target"
+            map:backgroundTint="@color/design_default_color_background">
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/random_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/target_random"
+            map:backgroundTint="@color/design_default_color_background">
+
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+    </LinearLayout>
+</FrameLayout>

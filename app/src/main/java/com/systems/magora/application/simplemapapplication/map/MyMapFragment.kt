@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.systems.magora.application.simplemapapplication.MainActivity
 import com.systems.magora.application.simplemapapplication.PermissionHelper
 import com.systems.magora.application.simplemapapplication.R
+import kotlinx.android.synthetic.main.fragment_map.view.*
 
 /**
  * A simple [Fragment] subclass.
@@ -34,25 +35,37 @@ class MyMapFragment :
         savedInstanceState: Bundle?
     ): View? {
         viewModel = ViewModelProvider(activity!!).get(MyMapViewModel::class.java)
-        viewModel.getCurrentLocation().observe(viewLifecycleOwner, Observer {
-                Log.d("mylog", "Пришла точка - ${it?.longitude}${it.latitude}")
-                map?.addMarker(MarkerOptions().position(it))
-                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 4.0F))
-        })
         return inflater.inflate(R.layout.fragment_map, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         checkPermissionAndLoad()
+
+        view.target_floating_action_button.setOnClickListener {
+            viewModel.getCurrentLocation().observe(viewLifecycleOwner, Observer {
+                map?.clear()
+                map?.addMarker(MarkerOptions().title(it.name).position(it.position))
+                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(it.position, 4.0F))
+            })
+        }
+
+        view.random_action_button.setOnClickListener {
+            viewModel.getRandomLocation().apply {
+                map?.clear()
+                this.forEach { map?.addMarker(MarkerOptions().title(it.name).position(it.position)) }
+                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(this.last().position,4.0F))
+            }
+        }
     }
 
 
     private fun checkPermissionAndLoad() {
-        if (PermissionHelper.isPermissionsGranted( activity!!,PermissionHelper.LOCATION)) {
+        if (PermissionHelper.isPermissionsGranted(activity!!, PermissionHelper.LOCATION)) {
             loadMap()
         } else {
-            PermissionHelper.requestPermission( activity!!, PermissionHelper.LOCATION )
+            PermissionHelper.requestPermission(activity!!, PermissionHelper.LOCATION)
         }
     }
 
@@ -64,13 +77,13 @@ class MyMapFragment :
         if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
             loadMap()
         } else {
-            AlertDialog.Builder(context)
+      AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.stat_notify_error)
                 .setMessage("Выделите права в настройках системы")
-                .setPositiveButton(android.R.string.ok, { dialog, which -> dialog.dismiss() })
+                .setPositiveButton(android.R.string.ok,{dialog, which -> checkPermissionAndLoad() })
                 .setCancelable(false)
                 .create()
-                .show()
+                .apply { show() }
         }
     }
 
@@ -79,13 +92,14 @@ class MyMapFragment :
         mapFragment.getMapAsync {
             map = it
             it.setOnMarkerClickListener {
-                val text = "${it?.position?.latitude}\n${it?.position?.longitude}"
-                Snackbar.make(view!!, text, Snackbar.LENGTH_INDEFINITE).apply {
+                Snackbar.make( view!!,"${it.title}\n${it?.position?.latitude};${it?.position?.longitude}",Snackbar.LENGTH_INDEFINITE
+                ).apply {
                     this.setAction("Close") { this.dismiss() }
                     this.show()
                 }
                 true
             }
+
         }
     }
 }
